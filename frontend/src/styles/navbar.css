@@ -1,0 +1,209 @@
+/* ==========================
+   NAVBAR
+========================== */
+
+.navbar {
+  width: 100%;
+  background: #ffffff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.navbar-container {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ==========================
+   LOGO
+========================== */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #0f9d58;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.logo-icon {
+  font-size: 34px;
+}
+
+/* ==========================
+   SEARCH
+========================== */
+
+.search-box {
+  width: 420px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 30px;
+  border: 2px solid #e7e7e7;
+  background: #fff;
+}
+
+.search-box input {
+  flex: 1;
+  height: 100%;
+  border: none;
+  padding: 0 18px;
+  font-size: 15px;
+  background: transparent;
+}
+
+.search-box button {
+  width: 60px;
+  height: 100%;
+  background: #0f9d58;
+  color: white;
+  font-size: 18px;
+  transition: .3s;
+}
+
+.search-box button:hover {
+  background: #0b7f47;
+}
+
+/* ==========================
+   NAV MENU
+========================== */
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.nav-menu a {
+  font-size: 16px;
+  color: #333;
+  font-weight: 500;
+  transition: .3s;
+  position: relative;
+}
+
+.nav-menu a:hover {
+  color: #0f9d58;
+}
+
+.nav-menu a.active {
+  color: #0f9d58;
+}
+
+.nav-menu a::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  left: 0;
+  bottom: -6px;
+  background: #0f9d58;
+  transition: .3s;
+}
+
+.nav-menu a:hover::after,
+.nav-menu a.active::after {
+  width: 100%;
+}
+
+/* ==========================
+   RIGHT ICONS
+========================== */
+
+.right-icons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.right-icons a {
+  color: #333;
+  font-size: 22px;
+  transition: .3s;
+}
+
+.right-icons a:hover {
+  color: #0f9d58;
+}
+
+.cart-icon {
+  position: relative;
+}
+
+.cart-icon span {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  width: 18px;
+  height: 18px;
+  background: red;
+  color: white;
+  font-size: 10px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================
+   MENU BUTTON
+========================== */
+
+.menu-btn {
+  display: none;
+  background: transparent;
+  font-size: 26px;
+  color: #333;
+}
+
+/* ==========================
+   HOVER EFFECT
+========================== */
+
+.logo:hover {
+  transform: scale(1.03);
+}
+
+.search-box,
+.logo,
+.right-icons a {
+  transition: .3s;
+}
+
+.search-box:hover {
+  border-color: #0f9d58;
+}
+.auth-btn{
+    text-decoration:none;
+    color:#1f2b50;
+    font-weight:600;
+    margin-left:15px;
+    transition:.3s;
+}
+
+.auth-btn:hover{
+    color:#16a34a;
+}
+
+.logout-btn{
+    border:none;
+    background:#ef4444;
+    color:#fff;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-left:15px;
+    transition:.3s;
+}
+
+.logout-btn:hover{
+    background:#dc2626;
+}

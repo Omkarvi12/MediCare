@@ -1,0 +1,411 @@
+/* ==========================
+   ORDER DETAILS PAGE
+========================== */
+
+.order-details-page {
+  min-height: 100vh;
+  padding: 80px 0;
+  background: #f8fafc;
+}
+
+
+/* ==========================
+   HEADER
+========================== */
+
+.order-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 35px;
+}
+
+.order-details-header h1 {
+  margin: 0 0 8px;
+
+  color: #1f2b50;
+
+  font-size: 45px;
+}
+
+.order-details-header p {
+  margin: 0;
+
+  color: #64748b;
+}
+
+
+.order-status-badge {
+  padding: 10px 22px;
+
+  border-radius: 25px;
+
+  background: #dcfce7;
+
+  color: #15803d;
+
+  font-weight: 600;
+}
+
+
+/* ==========================
+   INFO GRID
+========================== */
+
+.order-info-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 25px;
+
+  margin-bottom: 30px;
+}
+
+
+.info-card {
+  background: white;
+
+  padding: 25px;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 10px 25px
+    rgba(0, 0, 0, 0.07);
+}
+
+
+.info-card h3 {
+  margin-top: 0;
+
+  margin-bottom: 20px;
+
+  color: #1f2b50;
+}
+
+
+.info-card p {
+  color: #64748b;
+
+  line-height: 1.6;
+
+  margin: 10px 0;
+}
+
+
+.info-card strong {
+  color: #1f2b50;
+}
+
+
+/* ==========================
+   PRODUCTS
+========================== */
+
+.order-products-card {
+  background: white;
+
+  padding: 30px;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 10px 25px
+    rgba(0, 0, 0, 0.07);
+
+  margin-bottom: 30px;
+}
+
+
+.order-products-card h2 {
+  margin-top: 0;
+
+  color: #1f2b50;
+}
+
+
+.order-product {
+  display: flex;
+
+  align-items: center;
+
+  gap: 25px;
+
+  padding: 20px 0;
+
+  border-bottom: 1px solid #e2e8f0;
+}
+
+
+.order-product:last-child {
+  border-bottom: none;
+}
+
+
+.order-product-image img {
+  width: 90px;
+
+  height: 90px;
+
+  object-fit: contain;
+
+  border-radius: 12px;
+}
+
+
+.order-product-info {
+  flex: 1;
+}
+
+
+.order-product-info h3 {
+  margin: 0 0 8px;
+
+  color: #1f2b50;
+}
+
+
+.order-product-info p {
+  margin: 0;
+
+  color: #64748b;
+
+  font-size: 16px;
+}
+
+
+.order-product-total {
+  color: #16a34a;
+
+  font-size: 20px;
+
+  font-weight: 700;
+}
+
+
+/* ==========================
+   PRICE SUMMARY
+========================== */
+
+.order-price-card {
+  width: 450px;
+
+  max-width: 100%;
+
+  margin-left: auto;
+
+  background: white;
+
+  padding: 30px;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 10px 25px
+    rgba(0, 0, 0, 0.07);
+
+  box-sizing: border-box;
+}
+
+
+.order-price-card h2 {
+  margin-top: 0;
+
+  color: #1f2b50;
+}
+
+
+.price-row {
+  display: flex;
+
+  justify-content: space-between;
+
+  margin: 18px 0;
+
+  color: #64748b;
+}
+
+
+.price-row strong {
+  color: #1f2b50;
+}
+
+
+.final-price {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  font-size: 22px;
+}
+
+
+.final-price strong {
+  color: #16a34a;
+
+  font-size: 25px;
+}
+
+
+/* ==========================
+   BACK BUTTON
+========================== */
+
+.back-orders {
+  margin-top: 30px;
+}
+
+
+.back-orders a {
+  display: inline-block;
+
+  padding: 13px 22px;
+
+  background: #16a34a;
+
+  color: white;
+
+  text-decoration: none;
+
+  border-radius: 10px;
+
+  font-weight: 600;
+}
+
+
+.back-orders a:hover {
+  background: #15803d;
+}
+
+
+/* ==========================
+   NOT FOUND
+========================== */
+
+.order-not-found {
+  background: white;
+
+  padding: 70px;
+
+  text-align: center;
+
+  border-radius: 20px;
+}
+
+
+.order-not-found h2 {
+  color: #1f2b50;
+
+  margin-bottom: 25px;
+}
+
+
+.order-not-found a {
+  color: #16a34a;
+
+  font-weight: 600;
+
+  text-decoration: none;
+}
+
+
+/* ==========================
+   MOBILE
+========================== */
+
+@media (max-width: 900px) {
+
+  .order-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 768px) {
+
+  .order-details-page {
+    padding: 50px 20px;
+  }
+
+
+  .order-details-header {
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 20px;
+  }
+
+
+  .order-details-header h1 {
+    font-size: 36px;
+  }
+
+
+  .order-product {
+    gap: 15px;
+  }
+
+
+  .order-product-image img {
+    width: 65px;
+
+    height: 65px;
+  }
+
+
+  .order-product-total {
+    font-size: 17px;
+  }
+
+
+  .order-products-card,
+  .order-price-card {
+    padding: 20px;
+  }
+
+}
+/* ==========================
+   CANCEL ORDER
+========================== */
+
+.cancel-order-section {
+  margin-top: 25px;
+  text-align: right;
+}
+
+.cancel-order-btn {
+  padding: 14px 28px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #dc2626;
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.cancel-order-btn:hover {
+  background: #b91c1c;
+}
+
+.cancel-order-btn:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
