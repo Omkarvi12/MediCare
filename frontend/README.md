@@ -1,16 +1,28 @@
-# React + Vite
+# MediCare frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Deploy to Vercel
 
-Currently, two official plugins are available:
+1. Import the repository into Vercel.
+2. Set the project root directory to `frontend`.
+3. Keep the framework preset as **Vite**.
+4. Use `npm run build` as the build command and `dist` as the output directory.
+5. Add these Vercel environment variables:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+   ```text
+   VITE_API_URL=https://your-backend-domain.example.com/api
+   VITE_RAZORPAY_KEY_ID=your_razorpay_key_id
+   ```
 
-## React Compiler
+6. Deploy the project.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The `vercel.json` rewrite keeps React Router routes working when a user opens or refreshes a nested URL directly.
 
-## Expanding the ESLint configuration
+## Backend CORS
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+After deployment, set `FRONTEND_URL` on the backend to the Vercel URL. Multiple frontend URLs can be separated with commas:
+
+```text
+FRONTEND_URL=https://your-project.vercel.app
+```
+
+Do not commit a real `.env` file or private Razorpay keys. Use `.env.example` as the local configuration template.
