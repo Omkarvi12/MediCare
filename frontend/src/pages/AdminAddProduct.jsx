@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/api";
 import { toast } from "react-toastify";
-import "../styles/AdminAddProduct.css";
+import "../styles/adminAddProduct.css";
 
 function AdminAddProduct() {
 

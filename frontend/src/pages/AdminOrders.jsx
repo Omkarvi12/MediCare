@@ -4,7 +4,7 @@ import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 
-import "../styles/AdminOrders.css";
+import "../styles/adminOrders.css";
 
 function AdminOrders() {
   const navigate = useNavigate();
