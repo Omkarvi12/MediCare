@@ -52,6 +52,11 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
+
+  // Vercel Production Frontend
+  "https://medi-care-omkarvi12.vercel.app",
+
+  // Environment variable support
   ...(process.env.FRONTEND_URL || "")
     .split(",")
     .map((origin) => origin.trim())
@@ -60,7 +65,21 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: function (origin, callback) {
+      // Allow requests without an origin
+      // (Postman, server-to-server, etc.)
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(
+        new Error(`CORS blocked for origin: ${origin}`)
+      );
+    },
     credentials: true,
   })
 );
@@ -119,7 +138,7 @@ app.use("/api/payment", paymentRoutes);
 app.get("/", (req, res) => {
   res.status(200).json({
     success: true,
-    message: "🚀 MediCare Backend Running Successfully..."
+    message: "🚀 MediCare Backend Running Successfully...",
   });
 });
 
@@ -131,7 +150,7 @@ app.get("/", (req, res) => {
 app.use((req, res) => {
   res.status(404).json({
     success: false,
-    message: "Route Not Found"
+    message: "Route Not Found",
   });
 });
 
