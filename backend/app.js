@@ -11,13 +11,11 @@ const path = require("path");
 
 dotenv.config();
 
-
 // ==========================
 // Database
 // ==========================
 
 const connectDB = require("./config/db");
-
 
 // ==========================
 // Routes
@@ -30,20 +28,17 @@ const orderRoutes = require("./routes/orderRoutes");
 const userRoutes = require("./routes/userRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 
-
 // ==========================
 // Connect MongoDB
 // ==========================
 
 connectDB();
 
-
 // ==========================
 // Create Express App
 // ==========================
 
 const app = express();
-
 
 // ==========================
 // CORS
@@ -84,7 +79,6 @@ app.use(
   })
 );
 
-
 // ==========================
 // Middlewares
 // ==========================
@@ -97,7 +91,6 @@ app.use(cookieParser());
 
 app.use(morgan("dev"));
 
-
 // ==========================
 // Static Uploads
 // ==========================
@@ -106,7 +99,6 @@ app.use(
   "/uploads",
   express.static(path.join(__dirname, "uploads"))
 );
-
 
 // ==========================
 // API Routes
@@ -130,7 +122,6 @@ app.use("/api/users", userRoutes);
 // Payments
 app.use("/api/payment", paymentRoutes);
 
-
 // ==========================
 // Home Route
 // ==========================
@@ -141,7 +132,6 @@ app.get("/", (req, res) => {
     message: "🚀 MediCare Backend Running Successfully...",
   });
 });
-
 
 // ==========================
 // 404 Route
@@ -154,10 +144,11 @@ app.use((req, res) => {
   });
 });
 
-
 // ==========================
 // Start Server
 // ==========================
+
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(
