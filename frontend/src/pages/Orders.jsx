@@ -6,22 +6,26 @@ import api from "../api/api";
 import "../styles/orders.css";
 
 function Orders() {
-
   const [orders, setOrders] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
   const [errorMessage, setErrorMessage] = useState("");
 
+  // ======================================================
+  // API BASE URL
+  // ======================================================
+
+  const API_BASE_URL =
+    import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   // ======================================================
   // IMAGE URL HELPER
   // ======================================================
 
   const getImageUrl = (image) => {
-
     if (!image) {
-      return "";
+      return "/default-product.png";
     }
 
     // Cloudinary / external image
@@ -32,20 +36,16 @@ function Orders() {
       return image;
     }
 
-    // Old local image
-    return `http://localhost:5000/uploads/${image}`;
-
+    // Local image
+    return `${API_BASE_URL}/uploads/${image}`;
   };
-
 
   // ======================================================
   // FETCH ORDERS
   // ======================================================
 
   const fetchOrders = async () => {
-
     try {
-
       setLoading(true);
 
       setErrorMessage("");
@@ -58,7 +58,6 @@ function Orders() {
       );
 
     } catch (error) {
-
       console.error(
         "Orders Fetch Error:",
         error
@@ -70,29 +69,20 @@ function Orders() {
       );
 
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
-
   useEffect(() => {
-
     fetchOrders();
-
   }, []);
-
 
   // ======================================================
   // LOADING
   // ======================================================
 
   if (loading) {
-
     return (
-
       <section className="orders-page">
 
         <div className="container">
@@ -104,20 +94,15 @@ function Orders() {
         </div>
 
       </section>
-
     );
-
   }
-
 
   // ======================================================
   // ERROR
   // ======================================================
 
   if (errorMessage) {
-
     return (
-
       <section className="orders-page">
 
         <div className="container">
@@ -152,20 +137,15 @@ function Orders() {
         </div>
 
       </section>
-
     );
-
   }
-
 
   // ======================================================
   // NO ORDERS
   // ======================================================
 
   if (orders.length === 0) {
-
     return (
-
       <section className="orders-page">
 
         <div className="container">
@@ -200,22 +180,17 @@ function Orders() {
         </div>
 
       </section>
-
     );
-
   }
-
 
   // ======================================================
   // ORDERS UI
   // ======================================================
 
   return (
-
     <section className="orders-page">
 
       <div className="container">
-
 
         {/* ==================================================
             HEADER
@@ -235,7 +210,6 @@ function Orders() {
 
           </div>
 
-
           <Link
             to="/products"
             className="continue-shopping-btn"
@@ -244,7 +218,6 @@ function Orders() {
           </Link>
 
         </div>
-
 
         {/* ==================================================
             ORDERS LIST
@@ -259,13 +232,11 @@ function Orders() {
               key={order._id}
             >
 
-
               {/* ==================================================
                   ORDER HEADER
               ================================================== */}
 
               <div className="order-header">
-
 
                 {/* ORDER ID */}
 
@@ -280,7 +251,6 @@ function Orders() {
                   </strong>
 
                 </div>
-
 
                 {/* DATE */}
 
@@ -299,7 +269,6 @@ function Orders() {
                   </strong>
 
                 </div>
-
 
                 {/* STATUS */}
 
@@ -326,7 +295,6 @@ function Orders() {
 
               </div>
 
-
               {/* ==================================================
                   PRODUCTS
               ================================================== */}
@@ -342,7 +310,6 @@ function Orders() {
                       key={item._id}
                     >
 
-
                       {/* PRODUCT IMAGE */}
 
                       <img
@@ -351,14 +318,10 @@ function Orders() {
                         )}
                         alt={item.name}
                         onError={(e) => {
-
-                          // Hide broken image
-                          e.currentTarget.style.display =
-                            "none";
-
+                          e.currentTarget.src =
+                            "/default-product.png";
                         }}
                       />
-
 
                       {/* PRODUCT INFO */}
 
@@ -379,7 +342,6 @@ function Orders() {
 
                   ))}
 
-
                 {/* MORE PRODUCTS */}
 
                 {order.items?.length > 3 && (
@@ -396,13 +358,11 @@ function Orders() {
 
               </div>
 
-
               {/* ==================================================
                   ORDER FOOTER
               ================================================== */}
 
               <div className="order-footer">
-
 
                 {/* PAYMENT */}
 
@@ -418,7 +378,6 @@ function Orders() {
 
                 </div>
 
-
                 {/* PAYMENT STATUS */}
 
                 <div>
@@ -432,7 +391,6 @@ function Orders() {
                   </strong>
 
                 </div>
-
 
                 {/* TOTAL */}
 
@@ -452,7 +410,6 @@ function Orders() {
                   </strong>
 
                 </div>
-
 
                 {/* VIEW DETAILS */}
 
@@ -474,9 +431,7 @@ function Orders() {
       </div>
 
     </section>
-
   );
-
 }
 
 export default Orders;

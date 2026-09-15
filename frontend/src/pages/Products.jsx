@@ -24,6 +24,34 @@ function Products() {
   const { refreshCart } = useCart();
 
   // ==========================
+  // API BASE URL
+  // ==========================
+
+  const API_BASE_URL =
+    import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  // ==========================
+  // IMAGE URL HELPER
+  // ==========================
+
+  const getImageUrl = (image) => {
+    if (!image) {
+      return "/placeholder.png";
+    }
+
+    // Cloudinary / external image
+    if (
+      image.startsWith("http://") ||
+      image.startsWith("https://")
+    ) {
+      return image;
+    }
+
+    // Local image
+    return `${API_BASE_URL}/uploads/${image}`;
+  };
+
+  // ==========================
   // Fetch Products
   // ==========================
 
@@ -194,7 +222,9 @@ function Products() {
     return (
       <section className="products-page">
         <div className="container">
+
           <div className="products-loading">
+
             <h2>
               Loading Medicines...
             </h2>
@@ -202,7 +232,9 @@ function Products() {
             <p>
               Please wait...
             </p>
+
           </div>
+
         </div>
       </section>
     );
@@ -216,7 +248,9 @@ function Products() {
     return (
       <section className="products-page">
         <div className="container">
+
           <div className="products-error">
+
             <h2>
               Something went wrong
             </h2>
@@ -232,7 +266,9 @@ function Products() {
             >
               Try Again
             </button>
+
           </div>
+
         </div>
       </section>
     );
@@ -244,6 +280,7 @@ function Products() {
 
   return (
     <section className="products-page">
+
       <div className="container">
 
         {/* ==========================
@@ -253,6 +290,7 @@ function Products() {
         <div className="products-header">
 
           <div>
+
             <h1>
               Medicines & Healthcare
             </h1>
@@ -261,6 +299,7 @@ function Products() {
               Find medicines and healthcare
               products at MediCare.
             </p>
+
           </div>
 
           <div className="product-count">
@@ -304,6 +343,7 @@ function Products() {
               setSort(e.target.value)
             }
           >
+
             <option value="default">
               Sort By
             </option>
@@ -323,6 +363,7 @@ function Products() {
             <option value="rating">
               Rating
             </option>
+
           </select>
 
         </div>
@@ -394,15 +435,7 @@ function Products() {
                   >
 
                     <img
-                      src={
-                        product.image
-                          ? product.image.startsWith(
-                              "http"
-                            )
-                            ? product.image
-                            : `http://localhost:5000/uploads/${product.image}`
-                          : "/placeholder.png"
-                      }
+                      src={getImageUrl(product.image)}
                       alt={product.name}
                       onError={(e) => {
                         e.currentTarget.onerror = null;
@@ -429,9 +462,11 @@ function Products() {
                     to={`/product/${product._id}`}
                     className="product-name"
                   >
+
                     <h3>
                       {product.name}
                     </h3>
+
                   </Link>
 
                   {/* ==========================
@@ -477,9 +512,11 @@ function Products() {
                         : "product-stock out-stock"
                     }
                   >
+
                     {product.stock > 0
                       ? `In Stock (${product.stock})`
                       : "Out Of Stock"}
+
                   </div>
 
                   {/* ==========================
@@ -521,13 +558,16 @@ function Products() {
                   </div>
 
                 </div>
+
               )
             )}
 
           </div>
+
         )}
 
       </div>
+
     </section>
   );
 }

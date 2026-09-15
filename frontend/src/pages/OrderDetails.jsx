@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 import "../styles/orderDetails.css";
 
 function OrderDetails() {
-
   const { id } = useParams();
 
   const navigate = useNavigate();
@@ -18,15 +17,38 @@ function OrderDetails() {
 
   const [cancelling, setCancelling] = useState(false);
 
+  // ==========================
+  // API BASE URL
+  // ==========================
+
+  const API_BASE_URL =
+    import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+  // ==========================
+  // IMAGE URL HELPER
+  // ==========================
+
+  const getImageUrl = (image) => {
+    if (!image) {
+      return "/default-product.png";
+    }
+
+    if (
+      image.startsWith("http://") ||
+      image.startsWith("https://")
+    ) {
+      return image;
+    }
+
+    return `${API_BASE_URL}/uploads/${image}`;
+  };
 
   // ==========================
   // FETCH ORDER
   // ==========================
 
   const fetchOrder = async () => {
-
     try {
-
       const response = await api.get(
         `/orders/${id}`
       );
@@ -36,34 +58,25 @@ function OrderDetails() {
       );
 
     } catch (error) {
-
       console.error(
         "Order Details Error:",
         error.response?.data || error
       );
 
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
-
   useEffect(() => {
-
     fetchOrder();
-
   }, [id]);
-
 
   // ==========================
   // CANCEL ORDER
   // ==========================
 
   const handleCancelOrder = async () => {
-
     const confirmCancel = window.confirm(
       "Are you sure you want to cancel this order?"
     );
@@ -72,31 +85,24 @@ function OrderDetails() {
       return;
     }
 
-
     try {
-
       setCancelling(true);
 
       const response = await api.put(
         `/orders/${id}/cancel`
       );
 
-
       if (response.data.success) {
-
         toast.success(
           "Order Cancelled Successfully"
         );
 
-        // Update current order
         setOrder(
           response.data.order
         );
-
       }
 
     } catch (error) {
-
       console.error(
         "Cancel Order Error:",
         error.response?.data || error
@@ -108,53 +114,35 @@ function OrderDetails() {
       );
 
     } finally {
-
       setCancelling(false);
-
     }
-
   };
-
 
   // ==========================
   // LOADING
   // ==========================
 
   if (loading) {
-
     return (
-
       <section className="order-details-page">
-
         <div className="container">
-
           <h2>
             Loading Order...
           </h2>
-
         </div>
-
       </section>
-
     );
-
   }
-
 
   // ==========================
   // ORDER NOT FOUND
   // ==========================
 
   if (!order) {
-
     return (
-
       <section className="order-details-page">
-
         <div className="container">
-
           <div className="order-not-found">
-
             <h2>
               Order Not Found
             </h2>
@@ -162,28 +150,20 @@ function OrderDetails() {
             <Link to="/orders">
               Back To Orders
             </Link>
-
           </div>
-
         </div>
-
       </section>
-
     );
-
   }
-
 
   // ==========================
   // MAIN UI
   // ==========================
 
   return (
-
     <section className="order-details-page">
 
       <div className="container">
-
 
         {/* ==========================
             HEADER
@@ -203,7 +183,6 @@ function OrderDetails() {
 
           </div>
 
-
           <div
             className={`order-status-badge ${
               order.orderStatus
@@ -211,20 +190,16 @@ function OrderDetails() {
                 .replace(/\s+/g, "-")
             }`}
           >
-
             {order.orderStatus}
-
           </div>
 
         </div>
-
 
         {/* ==========================
             ORDER INFO
         ========================== */}
 
         <div className="order-info-grid">
-
 
           {/* ORDER INFORMATION */}
 
@@ -262,7 +237,6 @@ function OrderDetails() {
 
           </div>
 
-
           {/* PAYMENT INFORMATION */}
 
           <div className="info-card">
@@ -288,7 +262,6 @@ function OrderDetails() {
             </p>
 
           </div>
-
 
           {/* DELIVERY ADDRESS */}
 
@@ -326,7 +299,6 @@ function OrderDetails() {
 
         </div>
 
-
         {/* ==========================
             ORDERED PRODUCTS
         ========================== */}
@@ -336,7 +308,6 @@ function OrderDetails() {
           <h2>
             Ordered Products
           </h2>
-
 
           <div className="order-products">
 
@@ -350,12 +321,15 @@ function OrderDetails() {
                 <div className="order-product-image">
 
                   <img
-                    src={`http://localhost:5000/uploads/${item.image}`}
+                    src={getImageUrl(item.image)}
                     alt={item.name}
+                    onError={(e) => {
+                      e.currentTarget.src =
+                        "/default-product.png";
+                    }}
                   />
 
                 </div>
-
 
                 <div className="order-product-info">
 
@@ -369,7 +343,6 @@ function OrderDetails() {
                   </p>
 
                 </div>
-
 
                 <div className="order-product-total">
 
@@ -385,7 +358,6 @@ function OrderDetails() {
 
         </div>
 
-
         {/* ==========================
             PRICE SUMMARY
         ========================== */}
@@ -395,7 +367,6 @@ function OrderDetails() {
           <h2>
             Price Summary
           </h2>
-
 
           <div className="price-row">
 
@@ -409,7 +380,6 @@ function OrderDetails() {
 
           </div>
 
-
           <div className="price-row">
 
             <span>
@@ -421,7 +391,6 @@ function OrderDetails() {
             </strong>
 
           </div>
-
 
           <div className="price-row">
 
@@ -439,9 +408,7 @@ function OrderDetails() {
 
           </div>
 
-
           <hr />
-
 
           <div className="final-price">
 
@@ -456,7 +423,6 @@ function OrderDetails() {
           </div>
 
         </div>
-
 
         {/* ==========================
             CANCEL ORDER
@@ -482,7 +448,6 @@ function OrderDetails() {
 
         )}
 
-
         {/* ==========================
             BACK TO ORDERS
         ========================== */}
@@ -495,13 +460,10 @@ function OrderDetails() {
 
         </div>
 
-
       </div>
 
     </section>
-
   );
-
 }
 
 export default OrderDetails;

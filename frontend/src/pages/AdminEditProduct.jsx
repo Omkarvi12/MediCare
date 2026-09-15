@@ -4,7 +4,7 @@ import api from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 
-import "../styles/AdminEditProduct.css";
+import "../styles/adminEditProduct.css";
 
 function AdminEditProduct() {
   const { id } = useParams();

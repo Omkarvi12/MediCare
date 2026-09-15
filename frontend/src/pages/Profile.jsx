@@ -451,7 +451,6 @@ function Profile() {
       </div>
 
     </section>
-
   );
 
 }

@@ -7,8 +7,10 @@ import { useCart } from "../context/CartContext";
 
 import "../styles/checkout.css";
 
-function Checkout() {
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000";
 
+function Checkout() {
   const navigate = useNavigate();
 
   const { user, token } = useAuth();
@@ -19,17 +21,11 @@ function Checkout() {
   // ============================================
 
   const [cart, setCart] = useState([]);
-
   const [loading, setLoading] = useState(true);
+  const [placingOrder, setPlacingOrder] = useState(false);
 
-  const [placingOrder, setPlacingOrder] =
-    useState(false);
-
-  const [errorMessage, setErrorMessage] =
-    useState("");
-
-  const [successMessage, setSuccessMessage] =
-    useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -38,13 +34,30 @@ function Checkout() {
     paymentMethod: "COD",
   });
 
+  // ============================================
+  // IMAGE URL HELPER
+  // ============================================
+
+  const getImageUrl = (image) => {
+    if (!image) {
+      return "/default-product.png";
+    }
+
+    if (
+      image.startsWith("http://") ||
+      image.startsWith("https://")
+    ) {
+      return image;
+    }
+
+    return `${API_BASE_URL}/uploads/${image}`;
+  };
 
   // ============================================
   // AUTH HEADER
   // ============================================
 
   const getHeaders = () => {
-
     if (!token) {
       return {};
     }
@@ -54,117 +67,73 @@ function Checkout() {
     };
   };
 
-
   // ============================================
   // LOAD RAZORPAY SDK
   // ============================================
 
   const loadRazorpay = () => {
-
     return new Promise((resolve) => {
-
-      // Already loaded
       if (window.Razorpay) {
         resolve(true);
         return;
       }
 
-      // Check existing script
-      const existingScript =
-        document.querySelector(
-          'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
-        );
+      const existingScript = document.querySelector(
+        'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
+      );
 
       if (existingScript) {
-
-        existingScript.onload = () => {
-          resolve(true);
-        };
-
-        existingScript.onerror = () => {
-          resolve(false);
-        };
-
+        existingScript.onload = () => resolve(true);
+        existingScript.onerror = () => resolve(false);
         return;
       }
 
-      // Create script
-      const script =
-        document.createElement("script");
+      const script = document.createElement("script");
 
       script.src =
         "https://checkout.razorpay.com/v1/checkout.js";
 
       script.async = true;
 
-      script.onload = () => {
-        resolve(true);
-      };
-
-      script.onerror = () => {
-        resolve(false);
-      };
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
 
       document.body.appendChild(script);
-
     });
   };
-
 
   // ============================================
   // FETCH CART
   // ============================================
 
   const fetchCart = async () => {
-
     try {
+      const response = await api.get("/cart", {
+        headers: getHeaders(),
+      });
 
-      const response =
-        await api.get(
-          "/cart",
-          {
-            headers: getHeaders(),
-          }
-        );
-
-      setCart(
-        response.data.cart || []
-      );
-
+      setCart(response.data.cart || []);
     } catch (error) {
-
-      console.error(
-        "Checkout Cart Error:",
-        error
-      );
+      console.error("Checkout Cart Error:", error);
 
       setErrorMessage(
         error.response?.data?.message ||
-        "Unable to load cart."
+          "Unable to load cart."
       );
-
     }
   };
-
 
   // ============================================
   // FETCH PROFILE
   // ============================================
 
   const fetchProfile = async () => {
-
     try {
+      const response = await api.get("/auth/profile", {
+        headers: getHeaders(),
+      });
 
-      const response =
-        await api.get(
-          "/auth/profile",
-          {
-            headers: getHeaders(),
-          }
-        );
-
-      const profile =
-        response.data.user;
+      const profile = response.data.user;
 
       setFormData((prev) => ({
         ...prev,
@@ -184,23 +153,22 @@ function Checkout() {
           user?.address ||
           "",
       }));
-
     } catch (error) {
-
       console.error(
         "Checkout Profile Error:",
         error
       );
 
-      // Profile fetch fail ho to AuthContext
-      // se details lene ki koshish
-
       setFormData((prev) => ({
         ...prev,
 
-        name: user?.name || prev.name,
+        name:
+          user?.name ||
+          prev.name,
 
-        phone: user?.phone || prev.phone,
+        phone:
+          user?.phone ||
+          prev.phone,
 
         address:
           user?.address ||
@@ -209,17 +177,13 @@ function Checkout() {
     }
   };
 
-
   // ============================================
   // INITIAL LOAD
   // ============================================
 
   useEffect(() => {
-
     const loadCheckout = async () => {
-
       if (!token) {
-
         setLoading(false);
 
         setErrorMessage(
@@ -230,30 +194,23 @@ function Checkout() {
       }
 
       try {
-
         await Promise.all([
           fetchCart(),
           fetchProfile(),
         ]);
-
       } finally {
-
         setLoading(false);
-
       }
     };
 
     loadCheckout();
-
   }, [token]);
-
 
   // ============================================
   // HANDLE INPUT
   // ============================================
 
   const handleChange = (e) => {
-
     const {
       name,
       value,
@@ -264,13 +221,10 @@ function Checkout() {
       [name]: value,
     }));
 
-    // Remove old error while typing
     if (errorMessage) {
       setErrorMessage("");
     }
-
   };
-
 
   // ============================================
   // CALCULATE TOTAL
@@ -278,42 +232,28 @@ function Checkout() {
 
   const subtotal = cart.reduce(
     (total, item) => {
-
-      const price =
-        Number(
-          item.product?.price || 0
-        );
-
-      const quantity =
-        Number(
-          item.quantity || 0
-        );
-
-      return (
-        total +
-        price * quantity
+      const price = Number(
+        item.product?.price || 0
       );
 
+      const quantity = Number(
+        item.quantity || 0
+      );
+
+      return total + price * quantity;
     },
     0
   );
 
-
-  const gst =
-    subtotal * 0.05;
-
+  const gst = subtotal * 0.05;
 
   const deliveryCharge =
-    subtotal >= 500
-      ? 0
-      : 40;
-
+    subtotal >= 500 ? 0 : 40;
 
   const grandTotal =
     subtotal +
     gst +
     deliveryCharge;
-
 
   // ============================================
   // RESET PAYMENT STATE
@@ -322,51 +262,41 @@ function Checkout() {
   const resetPaymentState = (
     message = ""
   ) => {
-
     setPlacingOrder(false);
-
     setErrorMessage(message);
-
     setSuccessMessage("");
-
   };
-
 
   // ============================================
   // CREATE COD ORDER
   // ============================================
 
   const placeCODOrder = async () => {
-
     try {
+      const response = await api.post(
+        "/orders",
+        {
+          name:
+            formData.name.trim(),
 
-      const response =
-        await api.post(
-          "/orders",
-          {
-            name:
-              formData.name.trim(),
+          phone:
+            formData.phone.trim(),
 
-            phone:
-              formData.phone.trim(),
+          address:
+            formData.address.trim(),
 
-            address:
-              formData.address.trim(),
-
-            paymentMethod: "COD",
-          },
-          {
-            headers: getHeaders(),
-          }
-        );
+          paymentMethod: "COD",
+        },
+        {
+          headers: getHeaders(),
+        }
+      );
 
       if (!response.data?.success) {
-
         throw new Error(
           response.data?.message ||
-          "Unable to place order."
+            "Unable to place order."
         );
-
       }
 
       setSuccessMessage(
@@ -376,13 +306,9 @@ function Checkout() {
       await refreshCart();
 
       setTimeout(() => {
-
         navigate("/orders");
-
       }, 800);
-
     } catch (error) {
-
       console.error(
         "COD Order Error:",
         error
@@ -390,41 +316,32 @@ function Checkout() {
 
       setErrorMessage(
         error.response?.data?.message ||
-        error.message ||
-        "Unable to place order."
+          error.message ||
+          "Unable to place order."
       );
 
       setPlacingOrder(false);
-
     }
-
   };
-
 
   // ============================================
   // START ONLINE PAYMENT
   // ============================================
 
   const startOnlinePayment = async () => {
-
     let razorpayInstance = null;
 
     try {
-
       setErrorMessage("");
-
       setSuccessMessage("");
-
-
-      // ========================================
-      // LOAD RAZORPAY
-      // ========================================
 
       const sdkLoaded =
         await loadRazorpay();
 
-      if (!sdkLoaded || !window.Razorpay) {
-
+      if (
+        !sdkLoaded ||
+        !window.Razorpay
+      ) {
         resetPaymentState(
           "Razorpay could not be loaded. Please refresh the page."
         );
@@ -432,18 +349,11 @@ function Checkout() {
         return;
       }
 
-
-      // ========================================
-      // FRONTEND RAZORPAY KEY
-      // ========================================
-
       const razorpayKey =
         import.meta.env
           .VITE_RAZORPAY_KEY_ID;
 
-
       if (!razorpayKey) {
-
         resetPaymentState(
           "Razorpay Key ID is missing. Add VITE_RAZORPAY_KEY_ID to frontend .env."
         );
@@ -451,13 +361,11 @@ function Checkout() {
         return;
       }
 
-
       console.log(
         "Razorpay Key:",
         razorpayKey.substring(0, 8) +
-        "..."
+          "..."
       );
-
 
       // ========================================
       // CREATE RAZORPAY ORDER
@@ -472,44 +380,34 @@ function Checkout() {
           }
         );
 
-
       console.log(
         "Payment Order Response:",
         paymentResponse.data
       );
 
-
       if (
         !paymentResponse.data?.success
       ) {
-
         throw new Error(
           paymentResponse.data?.message ||
-          "Unable to create payment order."
+            "Unable to create payment order."
         );
-
       }
-
 
       const razorpayOrder =
         paymentResponse.data.order;
 
-
       if (!razorpayOrder?.id) {
-
         throw new Error(
           "Razorpay Order ID was not received."
         );
-
       }
-
 
       // ========================================
       // RAZORPAY OPTIONS
       // ========================================
 
       const options = {
-
         key: razorpayKey,
 
         amount:
@@ -528,7 +426,6 @@ function Checkout() {
           razorpayOrder.id,
 
         prefill: {
-
           name:
             formData.name.trim(),
 
@@ -537,30 +434,21 @@ function Checkout() {
 
           contact:
             formData.phone.trim(),
-
         },
 
         notes: {
-
           address:
             formData.address.trim(),
-
         },
 
         theme: {
-
           color: "#16a34a",
-
         },
 
         config: {
-
           display: {
-
             blocks: {
-
               upi: {
-
                 name: "Pay via UPI",
 
                 instruments: [
@@ -568,9 +456,7 @@ function Checkout() {
                     method: "upi",
                   },
                 ],
-
               },
-
             },
 
             sequence: [
@@ -578,28 +464,17 @@ function Checkout() {
             ],
 
             preferences: {
-
               show_default_blocks: true,
-
             },
-
           },
-
         },
 
-
-        // ======================================
-        // MODAL
-        // ======================================
-
         modal: {
-
           escape: true,
 
           backdropclose: false,
 
           ondismiss: () => {
-
             console.log(
               "Razorpay modal closed"
             );
@@ -607,189 +482,158 @@ function Checkout() {
             resetPaymentState(
               "Payment was cancelled."
             );
-
           },
-
         },
-
 
         // ======================================
         // PAYMENT SUCCESS
         // ======================================
 
-        handler:
-          async function (
+        handler: async function (
+          paymentResult
+        ) {
+          console.log(
+            "Razorpay Payment Success:",
             paymentResult
-          ) {
+          );
 
-            console.log(
-              "Razorpay Payment Success:",
-              paymentResult
+          try {
+            setSuccessMessage(
+              "Payment successful. Verifying payment..."
             );
 
+            // ==================================
+            // VERIFY PAYMENT
+            // ==================================
 
-            try {
+            const verifyResponse =
+              await api.post(
+                "/payment/verify",
+                {
+                  razorpay_order_id:
+                    paymentResult
+                      .razorpay_order_id,
 
-              setSuccessMessage(
-                "Payment successful. Verifying payment..."
+                  razorpay_payment_id:
+                    paymentResult
+                      .razorpay_payment_id,
+
+                  razorpay_signature:
+                    paymentResult
+                      .razorpay_signature,
+                },
+                {
+                  headers:
+                    getHeaders(),
+                }
               );
 
+            console.log(
+              "Payment Verify Response:",
+              verifyResponse.data
+            );
 
-              // ==================================
-              // VERIFY PAYMENT
-              // ==================================
-
-              const verifyResponse =
-                await api.post(
-                  "/payment/verify",
-                  {
-                    razorpay_order_id:
-                      paymentResult
-                        .razorpay_order_id,
-
-                    razorpay_payment_id:
-                      paymentResult
-                        .razorpay_payment_id,
-
-                    razorpay_signature:
-                      paymentResult
-                        .razorpay_signature,
-                  },
-                  {
-                    headers:
-                      getHeaders(),
-                  }
-                );
-
-
-              console.log(
-                "Payment Verify Response:",
+            if (
+              !verifyResponse.data
+                ?.success
+            ) {
+              throw new Error(
                 verifyResponse.data
-              );
-
-
-              if (
-                !verifyResponse.data
-                  ?.success
-              ) {
-
-                throw new Error(
-                  verifyResponse.data
-                    ?.message ||
-                  "Payment verification failed."
-                );
-
-              }
-
-
-              // ==================================
-              // CREATE ACTUAL MEDICARE ORDER
-              // ==================================
-
-              setSuccessMessage(
-                "Payment verified. Placing your order..."
-              );
-
-
-              const orderResponse =
-                await api.post(
-                  "/orders",
-                  {
-                    name:
-                      formData.name.trim(),
-
-                    phone:
-                      formData.phone.trim(),
-
-                    address:
-                      formData.address.trim(),
-
-                    paymentMethod:
-                      "ONLINE",
-
-                    razorpayOrderId:
-                      paymentResult
-                        .razorpay_order_id,
-
-                    razorpayPaymentId:
-                      paymentResult
-                        .razorpay_payment_id,
-                  },
-                  {
-                    headers:
-                      getHeaders(),
-                  }
-                );
-
-
-              console.log(
-                "MediCare Order Response:",
-                orderResponse.data
-              );
-
-
-              if (
-                !orderResponse.data
-                  ?.success
-              ) {
-
-                throw new Error(
-                  orderResponse.data
-                    ?.message ||
-                  "Unable to create MediCare order."
-                );
-
-              }
-
-
-              // ==================================
-              // SUCCESS
-              // ==================================
-
-              setPlacingOrder(false);
-
-              setErrorMessage("");
-
-              setSuccessMessage(
-                "Payment successful! Order placed successfully."
-              );
-
-
-              await refreshCart();
-
-
-              setTimeout(() => {
-
-                navigate("/orders");
-
-              }, 1000);
-
-            } catch (error) {
-
-              console.error(
-                "Payment Handler Error:",
-                error
-              );
-
-              console.error(
-                "Server Response:",
-                error.response?.data
-              );
-
-
-              resetPaymentState(
-                error.response?.data
                   ?.message ||
-                error.message ||
-                "Payment verification failed."
+                  "Payment verification failed."
               );
-
             }
 
-          },
+            // ==================================
+            // CREATE MEDICARE ORDER
+            // ==================================
 
+            setSuccessMessage(
+              "Payment verified. Placing your order..."
+            );
+
+            const orderResponse =
+              await api.post(
+                "/orders",
+                {
+                  name:
+                    formData.name.trim(),
+
+                  phone:
+                    formData.phone.trim(),
+
+                  address:
+                    formData.address.trim(),
+
+                  paymentMethod:
+                    "ONLINE",
+
+                  razorpayOrderId:
+                    paymentResult
+                      .razorpay_order_id,
+
+                  razorpayPaymentId:
+                    paymentResult
+                      .razorpay_payment_id,
+                },
+                {
+                  headers:
+                    getHeaders(),
+                }
+              );
+
+            console.log(
+              "MediCare Order Response:",
+              orderResponse.data
+            );
+
+            if (
+              !orderResponse.data
+                ?.success
+            ) {
+              throw new Error(
+                orderResponse.data
+                  ?.message ||
+                  "Unable to create MediCare order."
+              );
+            }
+
+            // ==================================
+            // SUCCESS
+            // ==================================
+
+            setPlacingOrder(false);
+            setErrorMessage("");
+
+            setSuccessMessage(
+              "Payment successful! Order placed successfully."
+            );
+
+            await refreshCart();
+
+            setTimeout(() => {
+              navigate("/orders");
+            }, 1000);
+          } catch (error) {
+            console.error(
+              "Payment Handler Error:",
+              error
+            );
+
+            console.error(
+              "Server Response:",
+              error.response?.data
+            );
+
+            resetPaymentState(
+              error.response?.data
+                ?.message ||
+                error.message ||
+                "Payment verification failed."
+            );
+          }
+        },
       };
-
 
       // ========================================
       // CREATE RAZORPAY INSTANCE
@@ -800,7 +644,6 @@ function Checkout() {
           options
         );
 
-
       // ========================================
       // PAYMENT FAILED
       // ========================================
@@ -808,12 +651,10 @@ function Checkout() {
       razorpayInstance.on(
         "payment.failed",
         (response) => {
-
           console.error(
             "Razorpay Payment Failed:",
             response
           );
-
 
           const message =
             response?.error
@@ -822,34 +663,19 @@ function Checkout() {
               ?.reason ||
             "Payment failed. Please try again.";
 
-
-          // VERY IMPORTANT
-          // Unlock page
-
           setPlacingOrder(false);
-
           setSuccessMessage("");
-
           setErrorMessage(message);
 
-
-          // Close popup
-
           try {
-
             razorpayInstance.close();
-
           } catch {
-
             console.log(
               "Razorpay close ignored"
             );
-
           }
-
         }
       );
-
 
       // ========================================
       // OPEN RAZORPAY
@@ -859,12 +685,8 @@ function Checkout() {
         "Opening Razorpay..."
       );
 
-
       razorpayInstance.open();
-
-
     } catch (error) {
-
       console.error(
         "Online Payment Error:",
         error
@@ -875,65 +697,44 @@ function Checkout() {
         error.response?.data
       );
 
-
       let message =
         error.response?.data
           ?.message ||
         error.message ||
         "Unable to start online payment.";
 
-
-      // Razorpay authentication
-      // error ko user-friendly banana
-
       if (
         message
           .toLowerCase()
-          .includes("authentication failed")
+          .includes(
+            "authentication failed"
+          )
       ) {
-
         message =
-          "Razorpay authentication failed. Please check Razorpay Test API Key ID and Secret in backend .env.";
-
+          "Razorpay authentication failed. Please check Razorpay Test API Key ID and Secret in backend environment variables.";
       }
 
-
-      resetPaymentState(
-        message
-      );
-
+      resetPaymentState(message);
     }
-
   };
-
 
   // ============================================
   // PLACE ORDER
   // ============================================
 
   const handlePlaceOrder = async (e) => {
-
     e.preventDefault();
-
-
-    // Prevent double click
 
     if (placingOrder) {
       return;
     }
 
-
     setErrorMessage("");
-
     setSuccessMessage("");
 
-
-    // ==========================================
     // LOGIN CHECK
-    // ==========================================
 
     if (!token) {
-
       setErrorMessage(
         "Please login before placing an order."
       );
@@ -941,13 +742,9 @@ function Checkout() {
       return;
     }
 
-
-    // ==========================================
     // CART CHECK
-    // ==========================================
 
     if (cart.length === 0) {
-
       setErrorMessage(
         "Your cart is empty."
       );
@@ -955,13 +752,9 @@ function Checkout() {
       return;
     }
 
-
-    // ==========================================
     // NAME
-    // ==========================================
 
     if (!formData.name.trim()) {
-
       setErrorMessage(
         "Please enter your full name."
       );
@@ -969,13 +762,9 @@ function Checkout() {
       return;
     }
 
-
-    // ==========================================
     // PHONE
-    // ==========================================
 
     if (!formData.phone.trim()) {
-
       setErrorMessage(
         "Please enter your phone number."
       );
@@ -983,13 +772,11 @@ function Checkout() {
       return;
     }
 
-
     if (
       !/^[0-9]{10}$/.test(
         formData.phone.trim()
       )
     ) {
-
       setErrorMessage(
         "Please enter a valid 10-digit phone number."
       );
@@ -997,13 +784,9 @@ function Checkout() {
       return;
     }
 
-
-    // ==========================================
     // ADDRESS
-    // ==========================================
 
     if (!formData.address.trim()) {
-
       setErrorMessage(
         "Please enter your delivery address."
       );
@@ -1011,100 +794,62 @@ function Checkout() {
       return;
     }
 
-
-    // ==========================================
-    // START PROCESSING
-    // ==========================================
-
     setPlacingOrder(true);
 
-
-    // ==========================================
     // COD
-    // ==========================================
 
     if (
       formData.paymentMethod ===
       "COD"
     ) {
-
       await placeCODOrder();
-
       return;
     }
 
-
-    // ==========================================
     // ONLINE
-    // ==========================================
 
     if (
       formData.paymentMethod ===
       "ONLINE"
     ) {
-
       await startOnlinePayment();
-
       return;
     }
-
-
-    // ==========================================
-    // UNKNOWN PAYMENT METHOD
-    // ==========================================
 
     setPlacingOrder(false);
 
     setErrorMessage(
       "Please select a payment method."
     );
-
   };
-
 
   // ============================================
   // LOADING
   // ============================================
 
   if (loading) {
-
     return (
-
       <section className="checkout-page">
-
         <div className="container">
-
           <div className="empty-checkout">
-
             <h2>
               Loading Checkout...
             </h2>
-
           </div>
-
         </div>
-
       </section>
-
     );
-
   }
-
 
   // ============================================
   // EMPTY CART
   // ============================================
 
   if (cart.length === 0) {
-
     return (
-
       <section className="checkout-page">
-
         <div className="container">
-
           <div className="empty-checkout">
-
             <h2>
               Your Cart is Empty 🛒
             </h2>
@@ -1121,103 +866,69 @@ function Checkout() {
             >
               Continue Shopping
             </button>
-
           </div>
-
         </div>
-
       </section>
-
     );
-
   }
-
 
   // ============================================
   // UI
   // ============================================
 
   return (
-
     <section className="checkout-page">
-
       <div className="container">
 
-
-        {/* ======================================
-            TITLE
-        ====================================== */}
+        {/* TITLE */}
 
         <div className="checkout-title">
-
-          <h1>
-            Checkout
-          </h1>
+          <h1>Checkout</h1>
 
           <p>
             Complete your order
           </p>
-
         </div>
 
-
-        {/* ======================================
-            ERROR
-        ====================================== */}
+        {/* ERROR */}
 
         {errorMessage && (
-
           <div
             className="checkout-error"
             role="alert"
           >
             {errorMessage}
           </div>
-
         )}
 
-
-        {/* ======================================
-            SUCCESS
-        ====================================== */}
+        {/* SUCCESS */}
 
         {successMessage && (
-
           <div
             className="checkout-success"
             role="status"
           >
             {successMessage}
           </div>
-
         )}
 
-
-        {/* ======================================
-            LAYOUT
-        ====================================== */}
+        {/* LAYOUT */}
 
         <div className="checkout-layout">
 
-
-          {/* ====================================
-              FORM
-          ==================================== */}
+          {/* FORM */}
 
           <form
             className="checkout-form"
             onSubmit={handlePlaceOrder}
           >
-
             <h2>
               Delivery Details
             </h2>
 
-
             {/* NAME */}
 
             <div className="form-group">
-
               <label>
                 Full Name
               </label>
@@ -1230,14 +941,11 @@ function Checkout() {
                 placeholder="Enter full name"
                 disabled={placingOrder}
               />
-
             </div>
-
 
             {/* PHONE */}
 
             <div className="form-group">
-
               <label>
                 Phone Number
               </label>
@@ -1251,14 +959,11 @@ function Checkout() {
                 maxLength="10"
                 disabled={placingOrder}
               />
-
             </div>
-
 
             {/* ADDRESS */}
 
             <div className="form-group">
-
               <label>
                 Delivery Address
               </label>
@@ -1271,27 +976,18 @@ function Checkout() {
                 rows="5"
                 disabled={placingOrder}
               />
-
             </div>
 
-
-            {/* ==================================
-                PAYMENT
-            ================================== */}
+            {/* PAYMENT */}
 
             <div className="payment-section">
-
               <h3>
                 Payment Method
               </h3>
 
-
               {/* COD */}
 
-              <label
-                className="payment-option"
-              >
-
+              <label className="payment-option">
                 <input
                   type="radio"
                   name="paymentMethod"
@@ -1307,16 +1003,11 @@ function Checkout() {
                 <span>
                   Cash On Delivery
                 </span>
-
               </label>
-
 
               {/* ONLINE */}
 
-              <label
-                className="payment-option"
-              >
-
+              <label className="payment-option">
                 <input
                   type="radio"
                   name="paymentMethod"
@@ -1332,90 +1023,59 @@ function Checkout() {
                 <span>
                   Online Payment
                 </span>
-
               </label>
-
             </div>
 
-
-            {/* ==================================
-                BUTTON
-            ================================== */}
+            {/* BUTTON */}
 
             <button
               type="submit"
               className="place-order-btn"
               disabled={placingOrder}
             >
-
               {placingOrder
-
                 ? formData.paymentMethod ===
                   "ONLINE"
-
                   ? "Processing Payment..."
-
                   : "Placing Order..."
-
                 : formData.paymentMethod ===
                   "ONLINE"
-
-                  ? `Pay ₹${grandTotal.toFixed(2)}`
-
-                  : "Place Order"
-
-              }
-
+                ? `Pay ₹${grandTotal.toFixed(2)}`
+                : "Place Order"}
             </button>
-
           </form>
 
-
-          {/* ====================================
-              SUMMARY
-          ==================================== */}
+          {/* SUMMARY */}
 
           <div className="checkout-summary">
-
             <h2>
               Order Summary
             </h2>
 
-
             {/* PRODUCTS */}
 
             {cart.map((item) => (
-
               <div
                 className="checkout-item"
                 key={item._id}
               >
-
-                <div
-                  className="checkout-product-info"
-                >
+                <div className="checkout-product-info">
 
                   <img
-                    src={
+                    src={getImageUrl(
                       item.product?.image
-                        ?.startsWith("http")
-                        ? item.product.image
-                        : `http://localhost:5000/uploads/${item.product?.image}`
-                    }
+                    )}
                     alt={
                       item.product?.name ||
                       "Product"
                     }
                     onError={(e) => {
-
-                      e.currentTarget.style.display =
-                        "none";
-
+                      e.currentTarget.src =
+                        "/default-product.png";
                     }}
                   />
 
                   <div>
-
                     <h4>
                       {item.product?.name}
                     </h4>
@@ -1424,45 +1084,35 @@ function Checkout() {
                       ₹
                       {Number(
                         item.product?.price ||
-                        0
+                          0
                       ).toFixed(2)}
                       {" "}×{" "}
                       {item.quantity}
                     </p>
-
                   </div>
-
                 </div>
 
-
                 <strong>
-
                   ₹
                   {(
                     Number(
                       item.product?.price ||
-                      0
+                        0
                     ) *
                     Number(
                       item.quantity ||
-                      0
+                        0
                     )
                   ).toFixed(2)}
-
                 </strong>
-
               </div>
-
             ))}
 
-
             <hr />
-
 
             {/* SUBTOTAL */}
 
             <div className="summary-row">
-
               <span>
                 Subtotal
               </span>
@@ -1470,14 +1120,11 @@ function Checkout() {
               <strong>
                 ₹{subtotal.toFixed(2)}
               </strong>
-
             </div>
-
 
             {/* GST */}
 
             <div className="summary-row">
-
               <span>
                 GST (5%)
               </span>
@@ -1485,36 +1132,27 @@ function Checkout() {
               <strong>
                 ₹{gst.toFixed(2)}
               </strong>
-
             </div>
-
 
             {/* DELIVERY */}
 
             <div className="summary-row">
-
               <span>
                 Delivery
               </span>
 
               <strong>
-
                 {deliveryCharge === 0
                   ? "FREE"
                   : `₹${deliveryCharge}`}
-
               </strong>
-
             </div>
 
-
             <hr />
-
 
             {/* TOTAL */}
 
             <div className="grand-total">
-
               <span>
                 Total
               </span>
@@ -1522,19 +1160,13 @@ function Checkout() {
               <strong>
                 ₹{grandTotal.toFixed(2)}
               </strong>
-
             </div>
-
           </div>
 
         </div>
-
       </div>
-
     </section>
-
   );
-
 }
 
 export default Checkout;
