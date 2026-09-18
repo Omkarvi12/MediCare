@@ -49,7 +49,8 @@ const allowedOrigins = [
   "http://localhost:5174",
 
   // Vercel Production Frontend
-  "https://medi-care-omkarvi12.vercel.app",
+ // Vercel Production Frontend
+"https://medi-care-seven-henna.vercel.app",
 
   // Environment variable support
   ...(process.env.FRONTEND_URL || "")
