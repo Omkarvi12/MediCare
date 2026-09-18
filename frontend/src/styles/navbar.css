@@ -12,10 +12,11 @@
 }
 
 .navbar-container {
-  height: 80px;
+  min-height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 20px;
 }
 
 /* ==========================
@@ -29,6 +30,8 @@
   color: #0f9d58;
   font-size: 28px;
   font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .logo-icon {
@@ -48,12 +51,15 @@
   border-radius: 30px;
   border: 2px solid #e7e7e7;
   background: #fff;
+  flex-shrink: 1;
 }
 
 .search-box input {
   flex: 1;
+  min-width: 0;
   height: 100%;
   border: none;
+  outline: none;
   padding: 0 18px;
   font-size: 15px;
   background: transparent;
@@ -62,10 +68,13 @@
 .search-box button {
   width: 60px;
   height: 100%;
+  border: none;
   background: #0f9d58;
   color: white;
   font-size: 18px;
-  transition: .3s;
+  cursor: pointer;
+  transition: 0.3s;
+  flex-shrink: 0;
 }
 
 .search-box button:hover {
@@ -86,8 +95,9 @@
   font-size: 16px;
   color: #333;
   font-weight: 500;
-  transition: .3s;
+  transition: 0.3s;
   position: relative;
+  text-decoration: none;
 }
 
 .nav-menu a:hover {
@@ -106,7 +116,7 @@
   left: 0;
   bottom: -6px;
   background: #0f9d58;
-  transition: .3s;
+  transition: 0.3s;
 }
 
 .nav-menu a:hover::after,
@@ -122,12 +132,13 @@
   display: flex;
   align-items: center;
   gap: 20px;
+  flex-shrink: 0;
 }
 
 .right-icons a {
   color: #333;
   font-size: 22px;
-  transition: .3s;
+  transition: 0.3s;
 }
 
 .right-icons a:hover {
@@ -159,9 +170,47 @@
 
 .menu-btn {
   display: none;
+  border: none;
   background: transparent;
   font-size: 26px;
   color: #333;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.menu-btn:hover {
+  color: #0f9d58;
+}
+
+/* ==========================
+   AUTH BUTTONS
+========================== */
+
+.auth-btn {
+  text-decoration: none;
+  color: #1f2b50;
+  font-weight: 600;
+  margin-left: 15px;
+  transition: 0.3s;
+}
+
+.auth-btn:hover {
+  color: #16a34a;
+}
+
+.logout-btn {
+  border: none;
+  background: #ef4444;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 15px;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background: #dc2626;
 }
 
 /* ==========================
@@ -175,35 +224,174 @@
 .search-box,
 .logo,
 .right-icons a {
-  transition: .3s;
+  transition: 0.3s;
 }
 
 .search-box:hover {
   border-color: #0f9d58;
 }
-.auth-btn{
-    text-decoration:none;
-    color:#1f2b50;
-    font-weight:600;
-    margin-left:15px;
-    transition:.3s;
+
+/* ==========================================================
+   TABLET
+   ========================================================== */
+
+@media (max-width: 1100px) {
+
+  .navbar-container {
+    gap: 12px;
+  }
+
+  .search-box {
+    width: 300px;
+  }
+
+  .nav-menu {
+    gap: 18px;
+  }
+
+  .right-icons {
+    gap: 14px;
+  }
+
 }
 
-.auth-btn:hover{
-    color:#16a34a;
+/* ==========================================================
+   MOBILE
+   ========================================================== */
+
+@media (max-width: 768px) {
+
+  .navbar-container {
+    min-height: 70px;
+    padding: 0 15px;
+    gap: 12px;
+  }
+
+  /* ---------- LOGO ---------- */
+
+  .logo {
+    font-size: 22px;
+    gap: 7px;
+  }
+
+  .logo-icon {
+    font-size: 28px;
+  }
+
+  /* ---------- SEARCH ---------- */
+
+  .search-box {
+    display: none;
+  }
+
+  /* ---------- DESKTOP NAV ---------- */
+
+  .nav-menu {
+    display: none;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 10px 0;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+    border-top: 1px solid #eeeeee;
+  }
+
+  /* ---------- OPEN MOBILE MENU ---------- */
+
+  .nav-menu.active {
+    display: flex;
+  }
+
+  .nav-menu a {
+    display: block;
+    width: 100%;
+    padding: 15px 25px;
+    font-size: 16px;
+  }
+
+  .nav-menu a::after {
+    display: none;
+  }
+
+  .nav-menu a:hover {
+    background: #f5faf7;
+  }
+
+  .nav-menu a.active {
+    background: #f0faf4;
+  }
+
+  /* ---------- RIGHT ICONS ---------- */
+
+  .right-icons {
+    margin-left: auto;
+    gap: 14px;
+  }
+
+  .right-icons > a:first-child {
+    display: none;
+  }
+
+  .right-icons .login-btn,
+  .right-icons .logout-btn {
+    display: none;
+  }
+
+  /* ---------- CART ---------- */
+
+  .cart-icon {
+    display: flex !important;
+    align-items: center;
+  }
+
+  /* ---------- HAMBURGER ---------- */
+
+  .menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
 }
 
-.logout-btn{
-    border:none;
-    background:#ef4444;
-    color:#fff;
-    padding:10px 18px;
-    border-radius:8px;
-    cursor:pointer;
-    margin-left:15px;
-    transition:.3s;
-}
+/* ==========================================================
+   SMALL MOBILE
+   ========================================================== */
 
-.logout-btn:hover{
-    background:#dc2626;
+@media (max-width: 480px) {
+
+  .navbar-container {
+    min-height: 64px;
+    padding: 0 12px;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .logo-icon {
+    font-size: 26px;
+  }
+
+  .right-icons {
+    gap: 12px;
+  }
+
+  .right-icons a {
+    font-size: 20px;
+  }
+
+  .menu-btn {
+    font-size: 24px;
+  }
+
+  .nav-menu {
+    top: 64px;
+  }
+
 }

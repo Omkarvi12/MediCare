@@ -1,5 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 
+import Navbar from "./components/Navbar";
+
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -12,178 +14,211 @@ import OrderDetails from "./pages/OrderDetails";
 import Profile from "./pages/Profile";
 
 import AdminDashboard from "./pages/AdminDashboard";
-
-import ProtectedRoute from "./components/ProtectedRoute";
-
 import AdminProducts from "./pages/AdminProducts";
 import AdminAddProduct from "./pages/AdminAddProduct";
-import AdminRoute from "./components/AdminRoute";
-import AdminOrders from "./pages/AdminOrders";
 import AdminEditProduct from "./pages/AdminEditProduct";
 import AdminUsers from "./pages/AdminUsers";
+import AdminOrders from "./pages/AdminOrders";
+
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
+
 function App() {
   return (
-    <Routes>
-
+    <>
       {/* ==========================
-          PUBLIC ROUTES
-      ========================== */}
+          COMMON NAVBAR
+          ========================== */}
 
-      <Route
-        path="/"
-        element={<Home />}
-      />
+      <Navbar />
 
-      <Route
-        path="/login"
-        element={<Login />}
-      />
+      <Routes>
 
-      <Route
-        path="/register"
-        element={<Register />}
-      />
+        {/* ==========================
+            PUBLIC ROUTES
+            ========================== */}
 
-      <Route
-        path="/products"
-        element={<Products />}
-      />
+        <Route
+          path="/"
+          element={<Home />}
+        />
 
-      <Route
-        path="/product/:id"
-        element={<ProductDetails />}
-      />
-      {/* ==========================
-          PROTECTED - CART
-      ========================== */}
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
-      <Route
-        path="/cart"
-        element={
-          <ProtectedRoute>
-            <Cart />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/register"
+          element={<Register />}
+        />
+
+        <Route
+          path="/products"
+          element={<Products />}
+        />
+
+        <Route
+          path="/product/:id"
+          element={<ProductDetails />}
+        />
 
 
-      {/* ==========================
-          PROTECTED - CHECKOUT
-      ========================== */}
+        {/* ==========================
+            PROTECTED - CART
+            ========================== */}
 
-      <Route
-        path="/checkout"
-        element={
-          <ProtectedRoute>
-            <Checkout />
-          </ProtectedRoute>
-        }
-      />
-
-
-      {/* ==========================
-          PROTECTED - ORDERS
-      ========================== */}
-
-      <Route
-        path="/orders"
-        element={
-          <ProtectedRoute>
-            <Orders />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <Cart />
+            </ProtectedRoute>
+          }
+        />
 
 
-      {/* ==========================
-          PROTECTED - ORDER DETAILS
-      ========================== */}
+        {/* ==========================
+            PROTECTED - CHECKOUT
+            ========================== */}
 
-      <Route
-        path="/orders/:id"
-        element={
-          <ProtectedRoute>
-            <OrderDetails />
-          </ProtectedRoute>
-        }
-      />
-
-
-      {/* ==========================
-          PROTECTED - PROFILE
-      ========================== */}
-
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <Checkout />
+            </ProtectedRoute>
+          }
+        />
 
 
-      {/* ==========================
-          ADMIN DASHBOARD
-      ========================== */}
+        {/* ==========================
+            PROTECTED - ORDERS
+            ========================== */}
 
-      <Route
-        path="/admin/dashboard"
-        element={
-          <AdminRoute>
-            <AdminDashboard />
-          </AdminRoute>
-        }
-      />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
 
-      {/* ==========================
-          ADMIN PRODUCTS
-      ========================== */}
 
-      <Route
-        path="/admin/products"
-        element={
-          <AdminRoute>
-            <AdminProducts />
-          </AdminRoute>
-        }
+        {/* ==========================
+            PROTECTED - ORDER DETAILS
+            ========================== */}
 
-      />
-      <Route
-  path="/admin/products/add"
-  element={
-    <AdminRoute>
-      <AdminAddProduct />
-    </AdminRoute>
-  }
-/>
-<Route
-  path="/admin/products/edit/:id"
-  element={
-    <AdminRoute>
-      <AdminEditProduct />
-    </AdminRoute>
-  }
-/>
-<Route
-  path="/admin/users"
-  element={
-    <AdminRoute>
-      <AdminUsers />
-    </AdminRoute>
-  }
-/>
-<Route
-  path="/admin/orders"
-  element={
-    <AdminRoute>
-      <AdminOrders />
-    </AdminRoute>
-  }
-/>
+        <Route
+          path="/orders/:id"
+          element={
+            <ProtectedRoute>
+              <OrderDetails />
+            </ProtectedRoute>
+          }
+        />
 
-    </Routes>
-    
+
+        {/* ==========================
+            PROTECTED - PROFILE
+            ========================== */}
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+
+
+        {/* ==========================
+            ADMIN DASHBOARD
+            ========================== */}
+
+        <Route
+          path="/admin/dashboard"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          }
+        />
+
+
+        {/* ==========================
+            ADMIN PRODUCTS
+            ========================== */}
+
+        <Route
+          path="/admin/products"
+          element={
+            <AdminRoute>
+              <AdminProducts />
+            </AdminRoute>
+          }
+        />
+
+
+        {/* ==========================
+            ADMIN ADD PRODUCT
+            ========================== */}
+
+        <Route
+          path="/admin/products/add"
+          element={
+            <AdminRoute>
+              <AdminAddProduct />
+            </AdminRoute>
+          }
+        />
+
+
+        {/* ==========================
+            ADMIN EDIT PRODUCT
+            ========================== */}
+
+        <Route
+          path="/admin/products/edit/:id"
+          element={
+            <AdminRoute>
+              <AdminEditProduct />
+            </AdminRoute>
+          }
+        />
+
+
+        {/* ==========================
+            ADMIN USERS
+            ========================== */}
+
+        <Route
+          path="/admin/users"
+          element={
+            <AdminRoute>
+              <AdminUsers />
+            </AdminRoute>
+          }
+        />
+
+
+        {/* ==========================
+            ADMIN ORDERS
+            ========================== */}
+
+        <Route
+          path="/admin/orders"
+          element={
+            <AdminRoute>
+              <AdminOrders />
+            </AdminRoute>
+          }
+        />
+
+      </Routes>
+    </>
   );
 }
 
